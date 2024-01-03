@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:doodle_for_gdsc/services/gpt_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -19,7 +17,6 @@ class DoodleAI extends StatefulWidget {
 }
 
 class _DoodleAIState extends State<DoodleAI> {
-  final GptService _gptService = GptService.instance;
   final SpeechToText _speechToText = SpeechToText();
 
   bool _speechEnabled = false;
@@ -31,18 +28,6 @@ class _DoodleAIState extends State<DoodleAI> {
   void initState() {
     super.initState();
     _initSpeech();
-  }
-
-  Future<String> getSvgCode(String object) async {
-    String svg = '';
-    final response = await _gptService.userPrompt('$object.Give me svg code.');
-
-    final svgCode = response!.choices.first.message!.content;
-
-    svg = svgCode.split('```')[1].split('html').last.trim();
-
-    // log(svg);
-    return svg;
   }
 
   void _initSpeech() async {
@@ -76,17 +61,11 @@ class _DoodleAIState extends State<DoodleAI> {
 
       print(_lastWords);
 
-      // print('last word  $object');
-
       widget.loadingCallback(true);
 
-      final rawSvg = await getSvgCode(_lastWords);
-
-      final PictureInfo pictureInfo =
-          await vg.loadPicture(SvgStringLoader(rawSvg), null);
-
       widget.loadingCallback(false);
-      widget.onGptCalled(pictureInfo);
+
+      // widget.onGptCalled(pictureInfo);
     });
   }
 
